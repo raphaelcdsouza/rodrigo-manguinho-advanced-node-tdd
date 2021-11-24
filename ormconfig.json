@@ -5,5 +5,5 @@
   "username": "tcrftuye",
   "password": "Nq2uyCXKvlQ_EVQUq295yRNWtO-7-cfg",
   "database": "tcrftuye",
-  "entities": ["dist/infra/postgres/entities/index.js"]
+  "entities": ["dist/infra/repos/postgres/entities/index.js"]
 }
