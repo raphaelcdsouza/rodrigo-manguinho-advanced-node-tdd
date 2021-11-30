@@ -21,7 +21,11 @@ describe('SavePictureController', () => {
     sut = new SavePictureController(changeProfilePicture)
   })
 
-  it('should build validators correctly', async () => {
+  it('should extend controller', async () => {
+    expect(sut).toBeInstanceOf(Controller)
+  })
+
+  it('should build validators correctly on save', async () => {
     const validators = sut.buildValidators({ file, userId })
 
     expect(validators).toEqual([
@@ -30,6 +34,12 @@ describe('SavePictureController', () => {
       new AllowedMimeTypes(['jpg', 'png'], mimeType),
       new MaxFileSize(5, buffer)
     ])
+  })
+
+  it('should build validators correctly on delete', async () => {
+    const validators = sut.buildValidators({ file: undefined, userId })
+
+    expect(validators).toEqual([])
   })
 
   it('should call ChangeProfilePicture with correct input', async () => {
@@ -46,9 +56,5 @@ describe('SavePictureController', () => {
       statusCode: 200,
       data: { initials: 'any_initials', pictureUrl: 'any_url' }
     })
-  })
-
-  it('should extend controller', async () => {
-    expect(sut).toBeInstanceOf(Controller)
   })
 })
