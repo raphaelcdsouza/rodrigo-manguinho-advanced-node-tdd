@@ -15,6 +15,7 @@ const adaptMulter: RequestHandler = (req, res, next) => {
     if (req.file !== undefined) {
       req.locals = { ...req.locals, file: { buffer: req.file.buffer, mimeType: req.file.mimetype } }
     }
+    next()
   })
 }
 
@@ -29,7 +30,10 @@ describe('MulterAdapter', () => {
   let sut: RequestHandler
 
   beforeAll(() => {
-    uploadSpy = jest.fn().mockImplementation(() => {})
+    uploadSpy = jest.fn().mockImplementation((req, res, next) => {
+      req.file = { buffer: Buffer.from('any_buffer'), mimetype: 'any_type' }
+      next()
+    })
     singleSpy = jest.fn().mockImplementation(() => uploadSpy)
     multerSpy = jest.fn().mockImplementation(() => ({ single: singleSpy }))
     fakeMulter = multer as jest.Mocked<typeof multer>
@@ -93,5 +97,17 @@ describe('MulterAdapter', () => {
         mimeType: req.file?.mimetype
       }
     })
+  })
+
+  it('should call next on success', () => {
+    uploadSpy = jest.fn().mockImplementationOnce((req, res, next) => {
+      req.file = { buffer: Buffer.from('any_buffer'), mimetype: 'any_type' }
+      next()
+    })
+
+    sut(req, res, next)
+
+    expect(next).toHaveBeenCalledWith()
+    expect(next).toHaveBeenCalledTimes(1)
   })
 })
